@@ -14,7 +14,7 @@ class UsageBased(PricingStrategy):
     def __init__(self, unit_price: Money) -> None:
         # TODO Day 1
         if not isinstance(unit_price, Money):
-            raise TypeError(" unit_price need to be a money instance ")
+            raise TypeError(" unit_price need to be a Money instance ")
         
         if unit_price.is_negative():
             raise ValueError(" value of unit_price not allowed ")
