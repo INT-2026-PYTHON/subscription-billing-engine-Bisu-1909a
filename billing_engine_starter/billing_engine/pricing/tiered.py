@@ -37,21 +37,22 @@ class TieredPricing(PricingStrategy):
         # TODO Day 1
         if not tiers:
             raise ValueError("tiers cannot be empty")
+        
         for i in range(len(tiers) - 1):
             if tiers[i + 1].from_units != tiers[i].to_units:
                 raise ValueError("tiers must be contiguous")
 
         for i, tier in enumerate(tiers):
             if tier.to_units is None and i != len(tiers) - 1:
-                raise ValueError("only last tier can be open-ended")
+                raise ValueError("only last one/tier can be None")
 
         if tiers[-1].to_units is not None:
-            raise ValueError("last tier must be open-ended")
+            raise ValueError("last one/tier must be None")
 
         currency = tiers[0].unit_price.currency
         for tier in tiers:
             if tier.unit_price.currency != currency:
-                raise ValueError("all tiers must use same currency")
+                raise ValueError(" all tiers must use a same type of currency ")
 
         self.tiers = tiers
 
