@@ -59,18 +59,19 @@ class TieredPricing(PricingStrategy):
     def calculate(self, quantity: int) -> Money:
         # TODO Day 1
         if quantity < 0:
-            raise ValueError("quantity cannot be negative")
+            raise ValueError(" Negative value of quantity not allowed ")
 
         currency = self.tiers[0].unit_price.currency
         total = Money.zero(currency)
 
         for tier in self.tiers:
             if tier.to_units is None:
-                # open-ended tier
                 units_in_tier = max(0, quantity - tier.from_units)
+                
             else:
                 if quantity > tier.from_units:
                     units_in_tier = min(quantity, tier.to_units) - tier.from_units
+                    
                 else:
                     units_in_tier = 0
 

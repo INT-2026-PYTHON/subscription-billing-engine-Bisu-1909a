@@ -26,12 +26,14 @@ class GSTCalculator(TaxCalculator):
         for name, rate in [("cgst", cgst), ("sgst", sgst), ("igst", igst)]:
             if isinstance(rate, float):
                 raise TypeError(f"{name} must be a Decimal, not float")
+            
             if not isinstance(rate, Decimal):
                 raise TypeError(f"{name} must be a Decimal")
+            
             if rate < Decimal("0") or rate > Decimal("1"):
                 raise ValueError(f"{name} must be between 0 and 1")
 
-        # Validate cgst + sgst == igst
+
         if cgst + sgst != igst:
             raise ValueError("CGST + SGST must equal IGST")
 
@@ -56,6 +58,7 @@ class GSTCalculator(TaxCalculator):
                 f"SGST {(self.sgst * 100).quantize(Decimal('1'))}%": sgst_amount,
             }
             total = cgst_amount + sgst_amount
+            
         else:
             igst_amount = taxable * self.igst
             components = {

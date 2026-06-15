@@ -15,15 +15,15 @@ class VATCalculator(TaxCalculator):
         #   - Reject float.
         #   - Store on self.
         def __init__(self, rate: Decimal) -> None:
-        # Reject float
          if isinstance(rate, float):
-            raise TypeError("rate must be a Decimal, not float")
-        # Require Decimal type
+            raise TypeError("value must be a decimal not float")
+       
         if not isinstance(rate, Decimal):
-            raise TypeError("rate must be a Decimal")
-        # Must be between 0 and 1
+            raise TypeError("value must be a decimal")
+      
         if rate < Decimal("0") or rate > Decimal("1"):
-            raise ValueError("rate must be between 0 and 1")
+            raise ValueError("value between 0 and 1")
+        
         self.rate = rate
 
     def apply(self, taxable: Money, context: TaxContext) -> TaxBreakdown:
@@ -33,10 +33,9 @@ class VATCalculator(TaxCalculator):
         #   - Tip: format the rate as a percentage cleanly.
         # Compute VAT amount
         vat_amount = taxable * self.rate
-        # Format label as percentage (e.g. "VAT 18%")
         percent = (self.rate * 100).quantize(Decimal("1"))
         label = f"VAT {percent}%"
-        # Return TaxBreakdown with one component and total
+        
         return TaxBreakdown(
             total=vat_amount,
             components={label: vat_amount}

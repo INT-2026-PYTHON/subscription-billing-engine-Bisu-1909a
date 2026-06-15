@@ -16,22 +16,19 @@ class Freemium(PricingStrategy):
 
     def __init__(self, free_quota: int, overage_strategy: PricingStrategy) -> None:
         # TODO Day 1
-        # Validate free_quota
         if free_quota < 0:
-            raise ValueError("free_quota must be non-negative")
-        # Validate overage_strategy is a PricingStrategy
+            raise ValueError("free_quota need to be non-negative")
+        
         if not isinstance(overage_strategy, PricingStrategy):
             raise TypeError("overage_strategy must be a PricingStrategy")
-        # Store values
+        
         self.free_quota = free_quota
         self.overage_strategy = overage_strategy
 
     def calculate(self, quantity: int) -> Money:
         # TODO Day 1
-        # Get currency from the inner strategy
         currency = self.overage_strategy.calculate(0).currency
-        # If within free quota, return zero
         if quantity <= self.free_quota:
             return Money.zero(currency)
-        # Else, delegate to overage strategy
+        
         return self.overage_strategy.calculate(quantity - self.free_quota)

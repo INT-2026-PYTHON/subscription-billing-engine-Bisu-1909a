@@ -15,5 +15,5 @@ class FirstMonthFree(Discount):
         # TODO Day 1
         if context.invoice_count_so_far == 0:
             return subtotal
-        # Otherwise → no discount
+        
         return Money.zero(subtotal.currency)
