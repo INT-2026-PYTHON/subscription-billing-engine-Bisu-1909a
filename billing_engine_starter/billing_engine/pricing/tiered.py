@@ -34,7 +34,6 @@ class TieredPricing(PricingStrategy):
     """Charges across multiple price tiers based on cumulative quantity."""
 
     def __init__(self, tiers: list[Tier]) -> None:
-        # TODO Day 1
         if not tiers:
             raise ValueError("tiers cannot be empty")
         
@@ -58,7 +57,6 @@ class TieredPricing(PricingStrategy):
 
 
     def calculate(self, quantity: int) -> Money:
-        # TODO Day 1
         if quantity < 0:
             raise ValueError(" Negative value of quantity not allowed ")
 

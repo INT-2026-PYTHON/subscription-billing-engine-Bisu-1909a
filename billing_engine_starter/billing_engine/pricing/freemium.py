@@ -15,7 +15,6 @@ class Freemium(PricingStrategy):
     """Returns 0 for quantity <= free_quota, else delegates overage to inner strategy."""
 
     def __init__(self, free_quota: int, overage_strategy: PricingStrategy) -> None:
-        # TODO Day 1
         if free_quota < 0:
             raise ValueError("free_quota need to be non-negative")
         
@@ -26,7 +25,6 @@ class Freemium(PricingStrategy):
         self.overage_strategy = overage_strategy
 
     def calculate(self, quantity: int) -> Money:
-        # TODO Day 1
         currency = self.overage_strategy.calculate(0).currency
         if quantity <= self.free_quota:
             return Money.zero(currency)
