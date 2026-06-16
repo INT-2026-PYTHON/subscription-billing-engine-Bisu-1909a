@@ -5,7 +5,7 @@ Pricing strategy abstract base class.
 """
 
 from abc import ABC, abstractmethod
-from billing_engine.money import Money
+from billing_engine_starter.billing_engine.money import Money
 
 
 class PricingStrategy(ABC):
