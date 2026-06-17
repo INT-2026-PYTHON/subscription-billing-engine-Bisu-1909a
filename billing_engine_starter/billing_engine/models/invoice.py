@@ -40,7 +40,6 @@ class Invoice:
     subscription_id: int
     period_start: date
     period_end: date
-    currency : str
     subtotal: Money
     discount_total: Money
     tax_total: Money
@@ -48,4 +47,4 @@ class Invoice:
     status: InvoiceStatus
     issued_at: Optional[datetime] = None
     pdf_path: Optional[str] = None
-    line_items: list[InvoiceLineItem] = field(default_factory=list)
+    line_items: list[InvoiceLineItem] = field(default_factory=list) 
