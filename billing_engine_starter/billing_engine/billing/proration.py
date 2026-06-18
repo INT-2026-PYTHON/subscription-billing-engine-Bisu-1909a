@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 from billing_engine.money import Money
 from billing_engine.taxes.base import TaxCalculator, TaxContext
@@ -38,6 +38,12 @@ class ProrationResult:
     charge_tax: Money        # tax that is on the new charge
 
 
+def _round_money(amount: Money) -> Money:
+    """Round to 2 decimal places using banker's rounding (standard for money)."""
+    rounded = amount.amount.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    return Money(rounded, amount.currency)
+
+
 def compute_proration(
     old_plan_price: Money,
     new_plan_price: Money,
@@ -47,6 +53,41 @@ def compute_proration(
     tax_calc: TaxCalculator,
     tax_context: TaxContext,
 ) -> ProrationResult:
-    """Pure function. STRETCH — implement only after Days 1+2 are green."""
-    # TODO Day 4
-    raise NotImplementedError("Day 4: implement compute_proration")
+    """Pure function. Computes proration credit + charge for a mid-cycle plan change."""
+    if not (period_start <= switch_date <= period_end):
+        raise ValueError(
+            f"switch_date {switch_date} outside period [{period_start}, {period_end}]"
+        )
+
+    if old_plan_price.currency != new_plan_price.currency:
+        raise ValueError("Cannot prorate across currencies")
+
+    total_days = (period_end - period_start).days
+    if total_days <= 0:
+        raise ValueError("Period must be positive")
+
+    remaining_days = (period_end - switch_date).days
+    ratio = Decimal(remaining_days) / Decimal(total_days)
+
+    # Calculate base amounts
+    credit_amount = old_plan_price * ratio
+    charge_amount = new_plan_price * ratio
+
+    # Round to 2 decimal places
+    credit_amount = _round_money(credit_amount)
+    charge_amount = _round_money(charge_amount)
+
+    # Calculate tax on both legs (tax is applied to the rounded base amount)
+    credit_tax = tax_calc.apply(credit_amount, tax_context).total
+    charge_tax = tax_calc.apply(charge_amount, tax_context).total
+
+    # Round taxes too
+    credit_tax = _round_money(credit_tax)
+    charge_tax = _round_money(charge_tax)
+
+    return ProrationResult(
+        credit_amount=credit_amount,
+        charge_amount=charge_amount,
+        credit_tax=credit_tax,
+        charge_tax=charge_tax,
+    )

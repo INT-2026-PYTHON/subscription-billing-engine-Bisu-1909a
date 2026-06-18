@@ -1,85 +1,96 @@
+"""
+Invoice building pipeline.
+"""
+
+from __future__ import annotations
+
 from datetime import date
 from typing import Optional
 
 from billing_engine.models import (
-    Invoice, InvoiceStatus, InvoiceLineItem, LineItemKind
+    Invoice, InvoiceStatus, InvoiceLineItem, LineItemKind,
+    Subscription,
 )
 from billing_engine.money import Money
-# ... other imports (DiscountContext, etc.)
+from billing_engine.pricing.base import PricingStrategy
+from billing_engine.discounts.base import Discount
+from billing_engine.taxes.base import TaxCalculator, TaxContext
+
 
 def build_invoice(
-    subscription: "Subscription",
-    plan: "Plan",
-    strategy: "PricingStrategy",
-    discount: Optional["Discount"],
-    tax_calc: "TaxCalculator",
-    tax_context: "TaxContext",
-    usage_quantity: int,
+    subscription: Subscription,
+    plan,
+    strategy: PricingStrategy,
+    discount: Optional[Discount],
+    tax_calc: TaxCalculator,
+    tax_context: TaxContext,
     period_start: date,
     period_end: date,
-    invoice_count_so_far: int,
+    usage_quantity: int = 0,
+    invoice_count_so_far: int = 0,
 ) -> Invoice:
-    """Pure function. Returns an Invoice (id=None, status=DRAFT) ready to be persisted."""
+    """Build complete invoice with line items."""
 
-    base = strategy.calculate(usage_quantity)
-
-    if discount is None:
-        discount_amount = Money.zero(base.currency)
+    # 1. Base amount
+    if usage_quantity > 0:
+        base_amount = strategy.calculate(usage_quantity).rounded()
     else:
-        from billing_engine.discounts import DiscountContext
-        context = DiscountContext(invoice_count_so_far)
-        discount_amount = discount.apply(base, context)
+        base_amount = strategy.calculate(0).rounded()
 
-    taxable = base - discount_amount
+    # 2. Apply discount
+    if discount:
+        try:
+            discount_total = discount.apply(base_amount, tax_context).rounded()
+        except TypeError:
+            discount_total = discount.apply(base_amount).rounded()
 
-    breakdown = tax_calc.apply(taxable, tax_context)
+        discounted_amount = (base_amount - discount_total).rounded()
+    else:
+        discounted_amount = base_amount
+        discount_total = Money.zero(base_amount.currency)
 
-    total = taxable + breakdown.total
+    # 3. Tax on the discounted amount
+    tax_result = tax_calc.apply(discounted_amount, tax_context)
+    tax_amount = tax_result.total.rounded()
 
-    # Build line items (will be saved separately)
-    line_items = [
-        InvoiceLineItem(
-            id=None,
-            invoice_id=None,
-            description=f"{plan.name} ({period_start} to {period_end})",
-            amount=base,
-            kind=LineItemKind.BASE,
-        )
-    ]
+    # 4. Final total
+    total_amount = (discounted_amount + tax_amount).rounded()
 
-    if discount_amount > Money.zero(base.currency):
-        line_items.append(
-            InvoiceLineItem(
-                id=None,
-                invoice_id=None,
-                description="Discount",
-                amount=-discount_amount,
-                kind=LineItemKind.DISCOUNT,
-            )
-        )
-
-    for component in breakdown.components:
-        line_items.append(
-            InvoiceLineItem(
-                id=None,
-                invoice_id=None,
-                description=component,
-                amount=breakdown.total,   # usually tax amount
-                kind=LineItemKind.TAX,
-            )
-        )
-
-        return Invoice(
+    # 5. Create invoice
+    invoice = Invoice(
         id=None,
         subscription_id=subscription.id,
         period_start=period_start,
         period_end=period_end,
-        subtotal=base,
-        discount_total=discount_amount,
-        tax_total=breakdown.total,
-        total=total,
+        subtotal=base_amount,
+        discount_total=discount_total,           # ← Must be the discount amount
+        tax_total=tax_amount,
+        total=total_amount,
         status=InvoiceStatus.DRAFT,
-        issued_at=None,
+        issued_at=period_end,
         pdf_path=None,
-        line_items=line_items,         
     )
+
+    # 6. Line items
+    line_items = [
+        InvoiceLineItem(None, None, "Base Charge", base_amount, LineItemKind.BASE)
+    ]
+
+    if discount and discount_total.amount > 0:
+        line_items.append(
+            InvoiceLineItem(None, None, "Discount", -discount_total, LineItemKind.DISCOUNT)
+        )
+
+    for comp in getattr(tax_result, 'components', []):
+        if isinstance(comp, str):
+            amount = tax_amount
+            name = comp
+        else:
+            amount = getattr(comp, 'amount', comp)
+            name = getattr(comp, 'name', 'Tax')
+        line_items.append(
+            InvoiceLineItem(None, None, name, amount, LineItemKind.TAX)
+        )
+
+    invoice.line_items = line_items
+    return invoice
