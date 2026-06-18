@@ -14,7 +14,6 @@ from billing_engine.discounts.base import Discount, DiscountContext
 
 class PercentageDiscount(Discount):
     def __init__(self, percentage: Decimal) -> None:
-        # TODO Day 1 
         if isinstance(percentage, float):
             raise TypeError("percentage must be a Decimal, not float")
         
@@ -27,6 +26,5 @@ class PercentageDiscount(Discount):
         self.percentage = percentage
 
     def apply(self, subtotal: Money, context: DiscountContext) -> Money:
-        # TODO Day 1  
         # Apply percentage discount
         return subtotal * self.percentage

@@ -47,4 +47,4 @@ class Invoice:
     status: InvoiceStatus
     issued_at: Optional[datetime] = None
     pdf_path: Optional[str] = None
-    line_items: list[InvoiceLineItem] = field(default_factory=list)
+    line_items: list[InvoiceLineItem] = field(default_factory=list) 
