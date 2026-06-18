@@ -53,7 +53,7 @@ def compute_proration(
     tax_calc: TaxCalculator,
     tax_context: TaxContext,
 ) -> ProrationResult:
-    """Pure function. Computes proration credit + charge for a mid-cycle plan change."""
+   
     if not (period_start <= switch_date <= period_end):
         raise ValueError(
             f"switch_date {switch_date} outside period [{period_start}, {period_end}]"

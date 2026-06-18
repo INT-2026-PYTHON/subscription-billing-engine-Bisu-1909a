@@ -63,7 +63,7 @@ def build_invoice(
         period_start=period_start,
         period_end=period_end,
         subtotal=base_amount,
-        discount_total=discount_total,           # ← Must be the discount amount
+        discount_total=discount_total,          
         tax_total=tax_amount,
         total=total_amount,
         status=InvoiceStatus.DRAFT,

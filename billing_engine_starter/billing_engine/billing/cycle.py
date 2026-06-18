@@ -44,7 +44,6 @@ class BillingResult:
 
 
 class BillingCycle:
-    """Day-3 deliverable. Day-4 stretch: add `upgrade_subscription(...)`."""
 
     def __init__(
         self,
@@ -56,10 +55,10 @@ class BillingCycle:
         invoice_repo: InvoiceRepository,
         line_item_repo: InvoiceLineItemRepository,
         ledger_repo: LedgerRepository,
-        strategy_factory: Callable,    # given a Plan, returns a PricingStrategy
-        discount_factory: Callable,    # given a discount_id or None, returns a Discount or None
-        tax_factory: Callable,         # given a Customer, returns (TaxCalculator, TaxContext)
-        gateway=None,                  # for dunning
+        strategy_factory: Callable,  
+        discount_factory: Callable,    
+        tax_factory: Callable,    
+        gateway=None,                 
     ) -> None:
         self.db = db
         self.customer_repo = customer_repo
@@ -81,9 +80,7 @@ class BillingCycle:
         subscriptions = self.subscription_repo.list_all()
 
         for sub in subscriptions:
-            # -------------------------------------------------------------
-            # TRIAL ACTIVATION CHECK
-            # -------------------------------------------------------------
+        
             if sub.status == SubscriptionStatus.TRIAL and sub.trial_end and sub.trial_end <= as_of:
                 self.subscription_repo.update_status(sub.id, SubscriptionStatus.ACTIVE)
                 result.trials_activated += 1
@@ -92,17 +89,13 @@ class BillingCycle:
             if sub.current_period_end > as_of:
                 continue
 
-            # -------------------------------------------------------------
-            # IDEMPOTENCY CHECK
-            # -------------------------------------------------------------
+          
             already_billed = self.invoice_repo.count_for_subscription(sub.id) > 0
             if already_billed:
                 result.invoices_skipped_duplicate += 1
                 continue
 
-            # -------------------------------------------------------------
-            # CALCULATE TOTALS 
-            # -------------------------------------------------------------
+           
             customer = self.customer_repo.get(sub.customer_id)
             plan = self.plan_repo.get(sub.plan_id)
             
@@ -118,9 +111,7 @@ class BillingCycle:
 
             total_amount = discounted_amount + tax_amount 
 
-            # -------------------------------------------------------------
-            # EXECUTE DOMAIN CHANGES
-            # -------------------------------------------------------------
+            
             invoice = Invoice(
                 id=None,
                 subscription_id=sub.id,
@@ -173,7 +164,7 @@ class BillingCycle:
         new_plan_id: int,
         switch_date: Optional[date] = None,
     ) -> Invoice:
-        """Mid-cycle upgrade with proration — Day 4."""
+        
         if switch_date is None:
             switch_date = date.today()
 
@@ -212,7 +203,7 @@ class BillingCycle:
             )
 
             # Create proration invoice
-                        # Create proration invoice
+            # Create proration invoice
             net_subtotal = pr.charge_amount - pr.credit_amount
             net_tax = pr.charge_tax - pr.credit_tax
             net_total = net_subtotal + net_tax
@@ -268,7 +259,6 @@ class BillingCycle:
                 )
             )
 
-            # Switch the plan
             self.subscription_repo.update_plan(subscription_id, new_plan_id)
 
             return invoice

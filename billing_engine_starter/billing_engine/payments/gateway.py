@@ -28,9 +28,7 @@ class PaymentGateway(ABC):
         raise NotImplementedError
 
 
-# ----------------------------------------------------------------
-# Scripted — for deterministic tests
-# ----------------------------------------------------------------
+
 class ScriptedGateway(PaymentGateway):
     """Returns pre-set results from a queue. Used in tests.
 
@@ -52,9 +50,7 @@ class ScriptedGateway(PaymentGateway):
         return self.results.popleft()
 
 
-# ----------------------------------------------------------------
-# Fake-random — for the CLI demo
-# ----------------------------------------------------------------
+
 class FakeRandomGateway(PaymentGateway):
     """Succeeds at a configurable rate; seeded for reproducibility."""
 

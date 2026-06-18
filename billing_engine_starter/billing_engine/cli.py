@@ -116,14 +116,14 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.cmd == "init":
             get_db()
-            print("✅ Database initialized.")
+            print(" Database initialized.")
 
         elif args.cmd == "customer" and args.customer_cmd == "add":
             db = get_db()
             repo = CustomerRepository(db)
             name = " ".join(args.name)
             cust = repo.add(Customer(None, name, args.email, args.country, args.state))
-            print(f"✅ Customer created with ID: {cust.id}")
+            print(f" Customer created with ID: {cust.id}")
 
         elif args.cmd == "plan" and args.plan_cmd == "list":
             db = get_db()
@@ -142,7 +142,7 @@ def main(argv: list[str] | None = None) -> int:
                 date.today(), date.today().replace(month=date.today().month % 12 + 1),
                 trial_end, None, None
             ))
-            print(f"✅ Subscription created with ID: {sub.id}")
+            print(f" Subscription created with ID: {sub.id}")
 
         elif args.cmd == "bill" and args.bill_cmd == "run":
             db = get_db()
@@ -161,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             as_of = args.date or date.today()
             result = cycle.run(as_of)
-            print(f"✅ Billing run complete. Invoices created: {result.invoices_created}")
+            print(f" Billing run complete. Invoices created: {result.invoices_created}")
 
         elif args.cmd == "invoice" and args.invoice_cmd == "show":
             db = get_db()
@@ -186,10 +186,10 @@ def main(argv: list[str] | None = None) -> int:
 
 def run_demo() -> int:
     """Scripted end-to-end scenario."""
-    print("🚀 Starting End-to-End Demo...\n")
+    print(" Starting End-to-End Demo...\n")
     try:
         # You can call the test logic or replicate key steps here
-        print("✅ Demo completed successfully!")
+        print(" Demo completed successfully!")
         print("\nTry: billing invoice show 1")
         return 0
     except Exception as e:
