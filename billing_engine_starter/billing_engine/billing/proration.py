@@ -32,10 +32,10 @@ from billing_engine.taxes.base import TaxCalculator, TaxContext
 
 @dataclass(frozen=True)
 class ProrationResult:
-    credit_amount: Money     # always returned as a POSITIVE Money; caller negates for line item
-    charge_amount: Money     # always positive
-    credit_tax: Money        # tax that was on the credit
-    charge_tax: Money        # tax that is on the new charge
+    credit_amount: Money   
+    charge_amount: Money   
+    credit_tax: Money       
+    charge_tax: Money        
 
 
 def _round_money(amount: Money) -> Money:
@@ -69,19 +69,19 @@ def compute_proration(
     remaining_days = (period_end - switch_date).days
     ratio = Decimal(remaining_days) / Decimal(total_days)
 
-    # Calculate base amounts
+
     credit_amount = old_plan_price * ratio
     charge_amount = new_plan_price * ratio
 
-    # Round to 2 decimal places
+  
     credit_amount = _round_money(credit_amount)
     charge_amount = _round_money(charge_amount)
 
-    # Calculate tax on both legs (tax is applied to the rounded base amount)
+   
     credit_tax = tax_calc.apply(credit_amount, tax_context).total
     charge_tax = tax_calc.apply(charge_amount, tax_context).total
 
-    # Round taxes too
+   
     credit_tax = _round_money(credit_tax)
     charge_tax = _round_money(charge_tax)
 

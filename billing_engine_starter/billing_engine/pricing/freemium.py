@@ -12,7 +12,6 @@ from billing_engine.pricing.base import PricingStrategy
 
 
 class Freemium(PricingStrategy):
-    """Returns 0 for quantity <= free_quota, else delegates overage to inner strategy."""
 
     def __init__(self, free_quota: int, overage_strategy: PricingStrategy) -> None:
         if free_quota < 0:

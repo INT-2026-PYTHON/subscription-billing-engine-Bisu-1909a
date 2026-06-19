@@ -9,7 +9,6 @@ from billing_engine.pricing.base import PricingStrategy
 
 
 class FlatRate(PricingStrategy):
-    """Charges a fixed amount every billing period."""
 
     def __init__(self, amount: Money) -> None:
         if not isinstance(amount, Money):

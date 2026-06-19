@@ -19,7 +19,6 @@ from dataclasses import dataclass
 from decimal import Decimal, ROUND_HALF_EVEN, getcontext
 from typing import Union
 
-# Set generous precision; rounding happens at display/persistence boundaries.
 getcontext().prec = 28
 
 Numeric = Union[int, str, Decimal]

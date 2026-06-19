@@ -26,12 +26,11 @@ from billing_engine.pricing.base import PricingStrategy
 @dataclass(frozen=True)
 class Tier:
     from_units: int
-    to_units: Optional[int]   # None means "unlimited" / open-ended
+    to_units: Optional[int]   
     unit_price: Money
 
 
 class TieredPricing(PricingStrategy):
-    """Charges across multiple price tiers based on cumulative quantity."""
 
     def __init__(self, tiers: list[Tier]) -> None:
         if not tiers:

@@ -31,13 +31,12 @@ def build_invoice(
 ) -> Invoice:
     """Build complete invoice with line items."""
 
-    # 1. Base amount
     if usage_quantity > 0:
         base_amount = strategy.calculate(usage_quantity).rounded()
     else:
         base_amount = strategy.calculate(0).rounded()
 
-    # 2. Apply discount
+  
     if discount:
         try:
             discount_total = discount.apply(base_amount, tax_context).rounded()
@@ -49,14 +48,14 @@ def build_invoice(
         discounted_amount = base_amount
         discount_total = Money.zero(base_amount.currency)
 
-    # 3. Tax on the discounted amount
+
     tax_result = tax_calc.apply(discounted_amount, tax_context)
     tax_amount = tax_result.total.rounded()
 
-    # 4. Final total
+   
     total_amount = (discounted_amount + tax_amount).rounded()
 
-    # 5. Create invoice
+   
     invoice = Invoice(
         id=None,
         subscription_id=subscription.id,
@@ -71,7 +70,7 @@ def build_invoice(
         pdf_path=None,
     )
 
-    # 6. Line items
+    
     line_items = [
         InvoiceLineItem(None, None, "Base Charge", base_amount, LineItemKind.BASE)
     ]

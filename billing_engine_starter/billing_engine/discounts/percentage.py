@@ -7,7 +7,6 @@ Examples:
 """
 
 from decimal import Decimal
-
 from billing_engine.money import Money
 from billing_engine.discounts.base import Discount, DiscountContext
 

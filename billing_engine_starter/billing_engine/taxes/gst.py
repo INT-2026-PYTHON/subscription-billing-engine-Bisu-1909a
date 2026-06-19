@@ -18,10 +18,6 @@ from billing_engine.taxes.base import TaxCalculator, TaxContext, TaxBreakdown
 
 class GSTCalculator(TaxCalculator):
     def __init__(self, cgst: Decimal, sgst: Decimal, igst: Decimal) -> None:
-        #   - Validate each rate is Decimal in [0, 1].
-        #   - Validate cgst + sgst == igst (sanity check on Indian GST setup).
-        #   - Store on self.
-        # Validate each rate
         for name, rate in [("cgst", cgst), ("sgst", sgst), ("igst", igst)]:
             if isinstance(rate, float):
                 raise TypeError(f"{name} must be a Decimal, not float")
@@ -41,11 +37,6 @@ class GSTCalculator(TaxCalculator):
         self.igst = igst
 
     def apply(self, taxable: Money, context: TaxContext) -> TaxBreakdown:
-        #   - Decide intra vs inter-state from context.
-        #     intra = bool(context.customer_state) and context.customer_state == context.seller_state
-        #   - If intra: components = [("CGST X%", taxable*cgst), ("SGST Y%", taxable*sgst)], total = sum
-        #   - Else:     components = [("IGST Z%", taxable*igst)],                            total = igst leg
-        # Decide intra vs inter-state
         intra = bool(context.customer_state) and context.customer_state == context.seller_state
 
         if intra:

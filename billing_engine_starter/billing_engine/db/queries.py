@@ -19,6 +19,7 @@ from typing import Optional
 # ============================================================
 # CUSTOMERS
 # ============================================================
+
 def insert_customer(
     conn: sqlite3.Connection,
     name: str,
@@ -51,6 +52,7 @@ def select_all_customers(conn: sqlite3.Connection) -> list[sqlite3.Row]:
 # ============================================================
 # PLANS + PLAN TIERS
 # ============================================================
+
 def insert_plan(
     conn: sqlite3.Connection,
     name: str,
@@ -104,6 +106,7 @@ def select_plan_tiers(conn: sqlite3.Connection, plan_id: int) -> list[sqlite3.Ro
 # ============================================================
 # DISCOUNTS
 # ============================================================
+
 def insert_discount(
     conn: sqlite3.Connection,
     code: str,
@@ -128,6 +131,7 @@ def select_discount_by_code(conn: sqlite3.Connection, code: str) -> Optional[sql
 # ============================================================
 # SUBSCRIPTIONS
 # ============================================================
+
 def insert_subscription(
     conn: sqlite3.Connection,
     customer_id: int,
@@ -214,6 +218,7 @@ def update_subscription_plan(conn: sqlite3.Connection, subscription_id: int, new
 # ============================================================
 # USAGE
 # ============================================================
+
 def insert_usage_record(conn: sqlite3.Connection, subscription_id: int, metric: str, quantity: int) -> int:
     cur = conn.execute(
         """
@@ -240,6 +245,7 @@ def sum_usage_for_subscription_metric(conn: sqlite3.Connection, subscription_id:
 # ============================================================
 # INVOICES + LINE ITEMS
 # ============================================================
+
 def insert_invoice(
     conn: sqlite3.Connection,
     subscription_id: int,
@@ -324,6 +330,7 @@ def select_line_items_for_invoice(conn: sqlite3.Connection, invoice_id: int) -> 
 # ============================================================
 # LEDGER
 # ============================================================
+
 def insert_ledger_entry(
     conn: sqlite3.Connection,
     invoice_id: Optional[int],
@@ -357,6 +364,7 @@ def select_ledger_for_customer(conn: sqlite3.Connection, customer_id: int) -> li
 # ============================================================
 # PAYMENT ATTEMPTS
 # ============================================================
+
 def insert_payment_attempt(
     conn: sqlite3.Connection,
     invoice_id: int,

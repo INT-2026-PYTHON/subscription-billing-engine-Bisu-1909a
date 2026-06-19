@@ -12,18 +12,12 @@ Contract:
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-
 from billing_engine.money import Money
 
 
 @dataclass(frozen=True)
 class DiscountContext:
-    """Extra information a discount may need to make its decision.
-
-    Add more fields here if a new discount type requires them.
-    """
-    invoice_count_so_far: int   # 0 = this is the first invoice for the subscription
-
+    invoice_count_so_far: int  
 
 class Discount(ABC):
     """Computes a discount amount to subtract from a subtotal."""

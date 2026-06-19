@@ -74,7 +74,7 @@ class DunningProcess:
         attempt_no = self.attempt_repo.count_for_invoice(invoice.id) + 1
         result = self.gateway.charge(invoice)
 
-    # ---------------- SUCCESS ----------------
+    
         if result.success:
             self.invoice_repo.mark_paid(invoice.id)
 
@@ -93,7 +93,7 @@ class DunningProcess:
 
             return DunningOutcome(DunningState.SUCCEEDED, attempt_no, None)
 
-    # ---------------- FINAL FAILURE ----------------
+   
         if attempt_no >= MAX_ATTEMPTS:
             self.invoice_repo.mark_failed(invoice.id)
 
@@ -113,7 +113,7 @@ class DunningProcess:
 
             return DunningOutcome(DunningState.FAILED_FINAL, attempt_no, None)
 
-    # ---------------- RETRY ----------------
+   
         delay_days = RETRY_DELAYS_DAYS[attempt_no]
         next_retry = now + timedelta(days=delay_days)
 
@@ -127,7 +127,7 @@ class DunningProcess:
 
         return DunningOutcome(DunningState.RETRYING, attempt_no, next_retry)
 
-    # --------------------------------------------------------
+  
     @staticmethod
     def should_cancel(past_due_since: date, today: date, grace_days: int = 7) -> bool:
         """Helper used by BillingCycle to decide PAST_DUE → CANCELLED."""

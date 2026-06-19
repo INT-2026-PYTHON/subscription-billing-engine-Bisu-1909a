@@ -19,10 +19,10 @@ class InvoiceStatus(str, Enum):
 class LineItemKind(str, Enum):
     BASE = "BASE"
     USAGE = "USAGE"
-    DISCOUNT = "DISCOUNT"             # negative amount
+    DISCOUNT = "DISCOUNT"            
     TAX = "TAX"
-    PRORATION_CREDIT = "PRORATION_CREDIT"   # negative
-    PRORATION_CHARGE = "PRORATION_CHARGE"   # positive
+    PRORATION_CREDIT = "PRORATION_CREDIT" 
+    PRORATION_CHARGE = "PRORATION_CHARGE"  
 
 
 @dataclass(frozen=True)

@@ -9,7 +9,6 @@ from billing_engine.pricing.base import PricingStrategy
 
 
 class UsageBased(PricingStrategy):
-    """Charges `unit_price * quantity`."""
 
     def __init__(self, unit_price: Money) -> None:
         if not isinstance(unit_price, Money):

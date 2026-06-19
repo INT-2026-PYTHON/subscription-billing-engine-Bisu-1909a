@@ -537,6 +537,7 @@ class InvoiceRepository:
             issued_at=invoice.issued_at,
             pdf_path=invoice.pdf_path,
         )
+        
 
     def get(self, invoice_id: int) -> Optional[Invoice]:
         with self.db.connect() as conn:
@@ -546,6 +547,7 @@ class InvoiceRepository:
             return None
         
         currency = row["currency"]
+        
         return Invoice(
     id=row["id"],
     subscription_id=row["subscription_id"],
@@ -611,12 +613,6 @@ class InvoiceRepository:
 
 
 class InvoiceLineItemRepository:
-    """Persistence boundary for invoice detail rows.
-
-    Line items explain how the invoice total was built: base charge, usage,
-    discount, tax, or proration. They are separate from the invoice header so
-    one invoice can contain multiple visible charges and credits.
-    """
 
     def __init__(self, db: Database) -> None:
         self.db = db
@@ -683,13 +679,8 @@ class InvoiceLineItemRepository:
 # ============================================================
 # LEDGER — APPEND-ONLY (do not implement update/delete)
 # ============================================================
-class LedgerRepository:
-    """Persistence boundary for the append-only accounting ledger.
 
-    The ledger records financial movements: DEBIT when the customer owes money,
-    CREDIT when money is received or reversed. It is append-only so history is
-    auditable; mistakes should be corrected with reversing entries, not edits.
-    """
+class LedgerRepository:
 
     def __init__(self, db: Database) -> None:
         self.db = db
@@ -758,7 +749,6 @@ class LedgerRepository:
 
         return result
 
-    # These two methods are intentionally implemented to REJECT — do not override.
     def update(self, *args, **kwargs):
         raise NotImplementedError("Ledger is append-only. Post a reversing entry instead.")
 

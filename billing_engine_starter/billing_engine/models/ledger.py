@@ -9,14 +9,14 @@ from billing_engine.money import Money
 
 
 class LedgerDirection(str, Enum):
-    DEBIT = "DEBIT"     # customer owes us (invoice issued)
-    CREDIT = "CREDIT"   # we received money OR reversal
+    DEBIT = "DEBIT"    
+    CREDIT = "CREDIT"   
 
 
 @dataclass(frozen=True)
 class LedgerEntry:
     id: Optional[int]
-    invoice_id: Optional[int]   # may be None for adjustments
+    invoice_id: Optional[int]   
     customer_id: int
     amount: Money
     direction: LedgerDirection

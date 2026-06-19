@@ -38,7 +38,7 @@ def format_invoice_text(invoice: Invoice, customer_name: str, plan_name: str) ->
         "-" * 60,
     ]
 
-    # Line items
+   
     if hasattr(invoice, "line_items") and invoice.line_items:
         for item in invoice.line_items:
             lines.append(f"{item.description:<45}₹ {float(item.amount.amount):>12.2f}")
@@ -68,11 +68,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="billing", description="Subscription Billing CLI")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    # Basic parsers
+  
     sub.add_parser("init", help="initialize the database")
     sub.add_parser("demo", help="run the demo scenario")
 
-    # customer add
+
     cust = sub.add_parser("customer", help="Customer commands")
     cust_sub = cust.add_subparsers(dest="customer_cmd", required=True)
     addp = cust_sub.add_parser("add")
@@ -81,31 +81,30 @@ def main(argv: list[str] | None = None) -> int:
     addp.add_argument("country")
     addp.add_argument("--state", default=None)
 
-    # plan list
     planp = sub.add_parser("plan")
     plan_sub = planp.add_subparsers(dest="plan_cmd", required=True)
     plan_sub.add_parser("list")
 
-    # subscribe
+  
     subp = sub.add_parser("subscribe")
     subp.add_argument("customer_id", type=int)
     subp.add_argument("plan_id", type=int)
     subp.add_argument("--trial-days", type=int, default=None)
     subp.add_argument("--discount", default=None)
 
-    # bill run
+  
     bill = sub.add_parser("bill")
     bill_sub = bill.add_subparsers(dest="bill_cmd", required=True)
     runp = bill_sub.add_parser("run")
     runp.add_argument("--date", type=lambda s: date.fromisoformat(s))
 
-    # invoice show
+    
     inv = sub.add_parser("invoice")
     inv_sub = inv.add_subparsers(dest="invoice_cmd", required=True)
     showp = inv_sub.add_parser("show")
     showp.add_argument("invoice_id", type=int)
 
-    # upgrade
+    
     upg = sub.add_parser("upgrade")
     upg.add_argument("subscription_id", type=int)
     upg.add_argument("new_plan_id", type=int)
@@ -187,8 +186,8 @@ def main(argv: list[str] | None = None) -> int:
 def run_demo() -> int:
     """Scripted end-to-end scenario."""
     print(" Starting End-to-End Demo...\n")
+    
     try:
-        # You can call the test logic or replicate key steps here
         print(" Demo completed successfully!")
         print("\nTry: billing invoice show 1")
         return 0

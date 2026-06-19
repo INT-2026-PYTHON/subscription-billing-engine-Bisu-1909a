@@ -76,7 +76,6 @@ class BillingCycle:
     def run(self, as_of: date) -> BillingResult:
         result = BillingResult(0, 0, 0)
         
-        # 1. Fetch subscriptions
         subscriptions = self.subscription_repo.list_all()
 
         for sub in subscriptions:
@@ -127,7 +126,7 @@ class BillingCycle:
             )
             saved_invoice = self.invoice_repo.add(invoice)
 
-            # Ledger Debit
+            
             self.ledger_repo.add(
                 LedgerEntry(
                     id=None,
@@ -139,7 +138,7 @@ class BillingCycle:
                 )
             )
 
-            # Advance period
+
             old_end = sub.current_period_end
             new_start = old_end
             month = old_end.month
@@ -169,7 +168,7 @@ class BillingCycle:
             switch_date = date.today()
 
         with self.db.transaction() as conn:
-            # Load data
+           
             sub = self.subscription_repo.get(subscription_id)
             if sub is None:
                 raise ValueError(f"Subscription {subscription_id} not found")
@@ -183,15 +182,15 @@ class BillingCycle:
             if customer is None:
                 raise ValueError("Customer not found")
 
-            # Get monthly prices using the same strategy as billing
+          
             old_strategy = self.strategy_factory(old_plan)
             new_strategy = self.strategy_factory(new_plan)
             
-            # Use monthly equivalent price (common pattern)
+          
             old_price = old_strategy.monthly_price() if hasattr(old_strategy, 'monthly_price') else old_strategy.calculate([])
             new_price = new_strategy.monthly_price() if hasattr(new_strategy, 'monthly_price') else new_strategy.calculate([])
 
-            # Compute proration
+      
             pr = compute_proration(
                 old_plan_price=old_price,
                 new_plan_price=new_price,
@@ -202,8 +201,6 @@ class BillingCycle:
                 tax_context=self.tax_factory(customer)[1],
             )
 
-            # Create proration invoice
-            # Create proration invoice
             net_subtotal = pr.charge_amount - pr.credit_amount
             net_tax = pr.charge_tax - pr.credit_tax
             net_total = net_subtotal + net_tax
@@ -226,7 +223,7 @@ class BillingCycle:
                 )
             )
 
-            # Line items
+            
             self.line_item_repo.add(
                 InvoiceLineItem(
                     id=None,
@@ -247,7 +244,7 @@ class BillingCycle:
                 )
             )
 
-            # Ledger entry (net effect)
+           
             self.ledger_repo.add(
                 LedgerEntry(
                     id=None,

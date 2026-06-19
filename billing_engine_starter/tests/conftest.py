@@ -50,11 +50,10 @@ def db() -> Database:
     try:
         Path(path).unlink()
     except PermissionError:
-        # If still locked on Windows, this is expected under heavy load
-        # The temp file will be cleaned up by the OS eventually
-        pass
-        
+        pass                              # If still locked on Windows, this is expected under heavy load
+                                          # The temp file will be cleaned up by the OS eventually
 
+        
 
 # ----------------------------------------------------------------
 # Bundle of repositories (cuts boilerplate in integration-y tests)

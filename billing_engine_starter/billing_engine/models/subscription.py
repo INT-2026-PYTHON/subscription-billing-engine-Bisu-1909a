@@ -20,7 +20,7 @@ class Subscription:
     plan_id: int
     status: SubscriptionStatus
     current_period_start: date
-    current_period_end: date     # exclusive: period covers [start, end)
+    current_period_end: date     
     trial_end: Optional[date] = None
     discount_id: Optional[int] = None
-    past_due_since: Optional[date] = None   # set when status moves to PAST_DUE
+    past_due_since: Optional[date] = None   

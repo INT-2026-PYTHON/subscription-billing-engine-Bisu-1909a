@@ -12,4 +12,3 @@ class NoTax(TaxCalculator):
             total=Money.zero(taxable.currency),
             components=[]  # empty list, not dict
         )
-

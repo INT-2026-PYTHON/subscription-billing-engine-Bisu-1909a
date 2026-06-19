@@ -30,15 +30,6 @@ class PaymentGateway(ABC):
 
 
 class ScriptedGateway(PaymentGateway):
-    """Returns pre-set results from a queue. Used in tests.
-
-    Example:
-        gateway = ScriptedGateway([
-            PaymentResult(False, "INSUFFICIENT_FUNDS"),
-            PaymentResult(False, "INSUFFICIENT_FUNDS"),
-            PaymentResult(True),
-        ])
-    """
 
     def __init__(self, results: list[PaymentResult]) -> None:
         self.results = deque(results)
@@ -48,7 +39,6 @@ class ScriptedGateway(PaymentGateway):
             return PaymentResult(True, None)
 
         return self.results.popleft()
-
 
 
 class FakeRandomGateway(PaymentGateway):

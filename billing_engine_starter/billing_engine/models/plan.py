@@ -24,4 +24,4 @@ class Plan:
     pricing_type: PricingType
     billing_period: BillingPeriod
     currency: str
-    config_json: str = "{}"   # JSON blob of strategy-specific config
+    config_json: str = "{}"   

@@ -7,9 +7,9 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class Customer:
-    id: Optional[int]            # None before insert; set by DB after
+    id: Optional[int]           
     name: str
     email: str
-    country_code: str            # "IN", "DE", "US", ...
-    state_code: str = ""         # e.g. "MH" for Maharashtra; "" if N/A
+    country_code: str         
+    state_code: str = ""       
     created_at: Optional[datetime] = None
