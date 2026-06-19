@@ -131,4 +131,4 @@ class DunningProcess:
     @staticmethod
     def should_cancel(past_due_since: date, today: date, grace_days: int = 7) -> bool:
         """Helper used by BillingCycle to decide PAST_DUE → CANCELLED."""
-         return (today - past_due_since).days >= grace_days
+        return (today - past_due_since).days >= grace_days
